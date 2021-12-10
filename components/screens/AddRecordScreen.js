@@ -29,12 +29,22 @@ const AddRecordScreen = ({records, setRecords}) => {
       const id = new Date().getTime() + getRandomInt(10000, 100000);
       const time = new Date().toLocaleDateString();
 
+      // storage.save({
+      //   key: title,
+      //   data: records,
+      //   expires: 1000 * 3600,
+      // });
+
       storage.save({
-        key: title,
-        data: records,
+        key: 'title', // Note: Do not use underscore("_") in key!
+        data: {
+          key: title,
+          value: value,
+        },
         expires: 1000 * 3600,
       });
-	  console.log(storage.cache[title]);
+
+      // console.log(storage.cache[title]);
       setRecords([...records, {id, title, value, time}]);
       setTitle('');
       setValue('');
