@@ -10,20 +10,57 @@ import {
   IconButton,
 } from 'react-native-paper';
 import Clipboard from '@react-native-community/clipboard';
+import {set} from 'react-native-reanimated';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const RecordCard = ({
   record,
   setSnackVisible,
-  setRecords,
+  password,
+  setPassword,
   records,
   setSnackText,
+  setDeleted,
+  isDeleted,
 }) => {
   const [isValueHidden, setValueHidden] = useState(true);
+  const [cartDataRefactor, setCartDataRefactor] = useState(
+    JSON.parse(record[1]),
+  );
+  // console.log('cartDataRefactor', cartDataRefactor.id);
 
-  const deleteRecord = del => {
-    setRecords(records.filter(record => record.id !== del.id));
-    setSnackText('Record Deleted');
-    setSnackVisible(true);
+  const deleteRecord = async del => {
+    // console.log('del', del);
+
+    // console.log('deleteRecord', del);
+    try {
+      await AsyncStorage.removeItem(del.id.toString());
+      let keys = [];
+      let handleGetKeyAndMultiGet = async () => {
+        // console.log('je redemande les clefs pour mettre à jour');
+        try {
+          keys = await AsyncStorage.getAllKeys();
+        } catch (e) {
+          console.log(e);
+        } finally {
+          if (keys._W !== null) {
+            await AsyncStorage.multiGet(keys).then(response => {
+              setPassword(response);
+              setDeleted(false);
+            });
+          }
+        }
+      };
+      // setRecords(
+      //   cartDataRefactor.filter(recordss => recordss[0].id !== del.id),
+      // );
+      setDeleted(!isDeleted);
+      setSnackText('Record Deleted');
+      setSnackVisible(true);
+    } catch (e) {
+      console.log(e);
+      // remove error
+    }
   };
 
   const copyToClipboard = (text, type) => {
@@ -35,11 +72,12 @@ const RecordCard = ({
   return (
     <Surface style={styles.record}>
       <View style={{maxWidth: Dimensions.get('screen').width / 1.3}}>
-        <TouchableOpacity onPress={() => copyToClipboard(record.title, 'Key')}>
-          <Title>{record.title}</Title>
+        <TouchableOpacity
+          onPress={() => copyToClipboard(cartDataRefactor.title, 'Key')}>
+          <Title>{cartDataRefactor.title}</Title>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => copyToClipboard(record.value, 'Value')}>
+          onPress={() => copyToClipboard(cartDataRefactor.value, 'Value')}>
           <TextInput
             mode="outlined"
             style={{
@@ -50,13 +88,16 @@ const RecordCard = ({
             editable={false}
             focusable={false}
             secureTextEntry={isValueHidden}
-            value={record.value}
+            value={cartDataRefactor.value}
           />
         </TouchableOpacity>
-        <Caption style={{marginTop: 10}}>{record.time}</Caption>
+        <Caption style={{marginTop: 10}}>{cartDataRefactor.time}</Caption>
       </View>
       <View>
-        <IconButton onPress={() => deleteRecord(record)} icon="delete" />
+        <IconButton
+          onPress={() => deleteRecord(cartDataRefactor)}
+          icon="delete"
+        />
         <IconButton
           onPress={() => setValueHidden(!isValueHidden)}
           icon={isValueHidden ? 'eye-off' : 'eye'}

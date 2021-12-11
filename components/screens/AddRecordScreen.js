@@ -10,8 +10,9 @@ import {
   Snackbar,
 } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {setItem, getAllKeys} from '../localStorage';
 
-const AddRecordScreen = ({records, setRecords}) => {
+const AddRecordScreen = () => {
   const [title, setTitle] = useState('');
   const [value, setValue] = useState('');
   const [isValueHidden, setValueHidden] = useState(true);
@@ -28,8 +29,6 @@ const AddRecordScreen = ({records, setRecords}) => {
     return Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min))) + min;
   };
 
-  useEffect(() => {}, []);
-
   const handleAddRecord = async () => {
     if (title.length > 0 && value.length > 0) {
       const id = new Date().getTime() + getRandomInt(10000, 100000);
@@ -41,69 +40,18 @@ const AddRecordScreen = ({records, setRecords}) => {
         value,
         time,
       };
-      await AsyncStorage.setItem(id.toString(), JSON.stringify(obj));
-
-      // //SET ITEM
-      // try {
-      //   const jsonValue = JSON.stringify([id, title]);
-      //   await AsyncStorage.setItem(title, jsonValue);
-      // } catch (e) {
-      //   // save error
-      // }
+      setItem(id.toString(), JSON.stringify(obj));
 
       //GET ALL KEYS
-      let keys = [];
-      try {
-        keys = await AsyncStorage.getAllKeys();
-        console.log('keys', keys);
-      } catch (e) {
-        // read key error
-      }
-
-      let passwordData;
-      try {
-        passwordData = await AsyncStorage.multiGet(keys).then(response => {
-          console.log(response[0][0]); // Key1
-          console.log(JSON.parse(response[0][1]).title); // Value1
-          console.log(typeof response[0][1]); // Value1
-          console.log(response[1][0]); // Key2
-          console.log(response[1][1]); // Value2
-        });
-      } catch (e) {
-        console.log('error', e);
-        // read key error
-      }
-
+      let keysArrValue = await getAllKeys();
+      console.log('keys AddRecordScreen', keysArrValue);
       // try {
-      //   let user = await AsyncStorage.multiGet(keys);
-      //   let parsed = JSON.parse(user);
-      //   console.log('parsed', parsed);
-      //   alert(parsed.title);
-      // } catch (error) {
-      //   alert(error);
-      // }
-
-      // //GET MULTIGET
-      // let values;
-      // try {
-      //   values = await AsyncStorage.multiGet(keys);
-      //   console.log('values', values);
-      //   return values;
+      //   keys = await AsyncStorage.getAllKeys();
+      //   console.log('pas le bon endroit', keys);
       // } catch (e) {
-      //   // read error
+      // read key error
       // }
-
-      //GET ITEM (UNIQUE KEY)
-      // try {
-      //   const jsonValue = await AsyncStorage.getItem(title);
-      //   jsonValue != null ? JSON.parse(jsonValue) : null;
-      //   console.log('jsonValue', jsonValue);
-      //   return jsonValue;
-      // } catch (e) {
-      //   // read error
-      // }
-
-      setRecords([...title, {title, value, time}]);
+      setTitle('');
       setValue('');
       setSnackText('New record added');
       setSnackVisible(true);
