@@ -10,7 +10,6 @@ import {
   IconButton,
 } from 'react-native-paper';
 import Clipboard from '@react-native-community/clipboard';
-import storage from './storage';
 
 const RecordCard = ({
   record,
@@ -22,10 +21,6 @@ const RecordCard = ({
   const [isValueHidden, setValueHidden] = useState(true);
 
   const deleteRecord = del => {
-    console.log(del);
-    // storage.remove({
-    //   key: del.title,
-    // });
     setRecords(records.filter(record => record.id !== del.id));
     setSnackText('Record Deleted');
     setSnackVisible(true);
@@ -62,7 +57,10 @@ const RecordCard = ({
       </View>
       <View>
         <IconButton onPress={() => deleteRecord(record)} icon="delete" />
-        <IconButton onPress={() => setValueHidden(!isValueHidden)} icon="eye" />
+        <IconButton
+          onPress={() => setValueHidden(!isValueHidden)}
+          icon={isValueHidden ? 'eye-off' : 'eye'}
+        />
       </View>
     </Surface>
   );

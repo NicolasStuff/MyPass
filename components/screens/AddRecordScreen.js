@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {View, ScrollView, KeyboardAvoidingView, StyleSheet} from 'react-native';
 import {
@@ -9,7 +9,7 @@ import {
   IconButton,
   Snackbar,
 } from 'react-native-paper';
-import storage from './storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AddRecordScreen = ({records, setRecords}) => {
   const [title, setTitle] = useState('');
@@ -18,35 +18,92 @@ const AddRecordScreen = ({records, setRecords}) => {
   const [isSnackVisible, setSnackVisible] = useState(false);
   const [snackText, setSnackText] = useState('');
 
+  const [tempValue, setTempValue] = useState([]);
+  // console.log('tempValue', tempValue);
+
   const handleValueHidden = () => {
     setValueHidden(!isValueHidden);
   };
   const getRandomInt = (min, max) => {
     return Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min))) + min;
   };
-  const handleAddRecord = () => {
+
+  useEffect(() => {}, []);
+
+  const handleAddRecord = async () => {
     if (title.length > 0 && value.length > 0) {
       const id = new Date().getTime() + getRandomInt(10000, 100000);
       const time = new Date().toLocaleDateString();
 
-      // storage.save({
-      //   key: title,
-      //   data: records,
-      //   expires: 1000 * 3600,
-      // });
+      let obj = {
+        id,
+        title,
+        value,
+        time,
+      };
+      await AsyncStorage.setItem(id.toString(), JSON.stringify(obj));
 
-      storage.save({
-        key: 'title', // Note: Do not use underscore("_") in key!
-        data: {
-          key: title,
-          value: value,
-        },
-        expires: 1000 * 3600,
-      });
+      // //SET ITEM
+      // try {
+      //   const jsonValue = JSON.stringify([id, title]);
+      //   await AsyncStorage.setItem(title, jsonValue);
+      // } catch (e) {
+      //   // save error
+      // }
 
-      // console.log(storage.cache[title]);
-      setRecords([...records, {id, title, value, time}]);
-      setTitle('');
+      //GET ALL KEYS
+      let keys = [];
+      try {
+        keys = await AsyncStorage.getAllKeys();
+        console.log('keys', keys);
+      } catch (e) {
+        // read key error
+      }
+
+      let passwordData;
+      try {
+        passwordData = await AsyncStorage.multiGet(keys).then(response => {
+          console.log(response[0][0]); // Key1
+          console.log(JSON.parse(response[0][1]).title); // Value1
+          console.log(typeof response[0][1]); // Value1
+          console.log(response[1][0]); // Key2
+          console.log(response[1][1]); // Value2
+        });
+      } catch (e) {
+        console.log('error', e);
+        // read key error
+      }
+
+      // try {
+      //   let user = await AsyncStorage.multiGet(keys);
+      //   let parsed = JSON.parse(user);
+      //   console.log('parsed', parsed);
+      //   alert(parsed.title);
+      // } catch (error) {
+      //   alert(error);
+      // }
+
+      // //GET MULTIGET
+      // let values;
+      // try {
+      //   values = await AsyncStorage.multiGet(keys);
+      //   console.log('values', values);
+      //   return values;
+      // } catch (e) {
+      //   // read error
+      // }
+
+      //GET ITEM (UNIQUE KEY)
+      // try {
+      //   const jsonValue = await AsyncStorage.getItem(title);
+      //   jsonValue != null ? JSON.parse(jsonValue) : null;
+      //   console.log('jsonValue', jsonValue);
+      //   return jsonValue;
+      // } catch (e) {
+      //   // read error
+      // }
+
+      setRecords([...title, {title, value, time}]);
       setValue('');
       setSnackText('New record added');
       setSnackVisible(true);
@@ -63,8 +120,7 @@ const AddRecordScreen = ({records, setRecords}) => {
         <View style={styles.inputWrapper}>
           <TextInput
             style={styles.input}
-            label="Key"
-            mode="outlined"
+            label="Title"
             value={title}
             onChangeText={text => setTitle(text)}
           />
@@ -73,7 +129,6 @@ const AddRecordScreen = ({records, setRecords}) => {
             <TextInput
               style={styles.input}
               label="Value"
-              mode="outlined"
               value={value}
               onChangeText={text => setValue(text)}
               secureTextEntry={isValueHidden}

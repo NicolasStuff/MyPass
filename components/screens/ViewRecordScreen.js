@@ -3,7 +3,6 @@ import React, {useState, useEffect} from 'react';
 import {ScrollView, View, StyleSheet} from 'react-native';
 import {Headline, Searchbar, Snackbar} from 'react-native-paper';
 import RecordCard from './RecordCard';
-import storage from './storage';
 
 const AddRecordScreen = ({records, setRecords}) => {
   const [search, setSearch] = useState('');
@@ -14,37 +13,14 @@ const AddRecordScreen = ({records, setRecords}) => {
   const handleSearch = text => {
     setSearch(text);
   };
-
   useEffect(() => {
-    console.log('search');
-    // load
-    storage
-      .load({
-        key: 'title',
-      })
-      .then(ret => {
-        // found data goes to then()
-        console.log('value', ret.value);
-        console.log('key', ret.key);
-      })
-      .catch(err => {
-        console.warn(err.message);
-        switch (err.name) {
-          case 'NotFoundError':
-            // TODO;
-            break;
-          case 'ExpiredError':
-            // TODO
-            break;
-        }
-      });
-
-    // const results = records.filter(record =>
-    //   record.title.toLowerCase().includes(search.toLowerCase()),
-    // );
-    // console.log('results', results);
-    // setDisplay(results);
-  }, [search, records]);
+    let handleFilter = ret => {
+      const results = ret.filter(record =>
+        record.title.toLowerCase().includes(search.toLowerCase()),
+      );
+      setDisplay(results);
+    };
+  }, [records, search]);
 
   return (
     <>
