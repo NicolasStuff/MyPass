@@ -7,10 +7,16 @@ import ViewRecordScreen from './screens/ViewRecordScreen';
 const Tab = createMaterialTopTabNavigator();
 
 const HomeTabs = () => {
+  const [counter, setCounter] = useState([]);
+
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Add Record">{() => <AddRecordScreen />}</Tab.Screen>
-      <Tab.Screen name="View Record">{() => <ViewRecordScreen />}</Tab.Screen>
+      <Tab.Screen name="Add Record">
+        {() => <AddRecordScreen counter={counter} setCounter={setCounter}/>}
+      </Tab.Screen>
+      <Tab.Screen name="View Record">
+        {() => <ViewRecordScreen counter={counter} setCounter={setCounter}/>}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 };

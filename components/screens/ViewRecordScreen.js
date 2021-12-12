@@ -5,7 +5,7 @@ import {Headline, Snackbar} from 'react-native-paper';
 import RecordCard from './RecordCard';
 import {getAllKeys, multiGet, removeItem} from '../localStorage';
 
-const AddRecordScreen = () => {
+const ViewRecordScreen = ({counter, setCounter}) => {
   const [isSnackVisible, setSnackVisible] = useState(false);
   const [snackText, setSnackText] = useState('Done');
   const [passwords, setPasswords] = useState([]);
@@ -29,7 +29,7 @@ const AddRecordScreen = () => {
       }
     };
     handleGetKeyAndMultiGet();
-  }, [setPasswords, removedItem]);
+  }, [setPasswords, removedItem, counter]);
 
   if (removedItem !== null) {
     console.log('removedItem', removedItem);
@@ -113,4 +113,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddRecordScreen;
+export default ViewRecordScreen;

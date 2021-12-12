@@ -11,7 +11,7 @@ import {
 } from 'react-native-paper';
 import {setItem} from '../localStorage';
 
-const AddRecordScreen = () => {
+const AddRecordScreen = ({counter, setCounter}) => {
   const [title, setTitle] = useState('');
   const [value, setValue] = useState('');
   const [isValueHidden, setValueHidden] = useState(true);
@@ -42,9 +42,10 @@ const AddRecordScreen = () => {
         console.log('error setItem', error);
       } finally {
         setItem('');
+        setTitle('');
+        setValue('');
+        setCounter(counter + 1);
       }
-      setTitle('');
-      setValue('');
       setSnackText('New record added');
       setSnackVisible(true);
     } else {
