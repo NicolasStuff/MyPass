@@ -13,16 +13,6 @@ const AddRecordScreen = () => {
   console.log('passwords', passwords);
 
   useEffect(() => {
-    // let handleGetKeyAndMultiGet2 = async () => {
-    //   let keysArrValue = await getAllKeys();
-    //   console.log('keysArrValue', keysArrValue);
-    //   if (keysArrValue._W !== null) {
-    //     let ret = await multiGet(keysArrValue);
-    //     // console.log('ret', ret);
-    //     setPasswords(ret);
-    //   }
-    // };
-    // handleGetKeyAndMultiGet2();
     let handleGetKeyAndMultiGet = async () => {
       let keysArrValue;
       try {
@@ -31,7 +21,6 @@ const AddRecordScreen = () => {
         console.log('error', e);
       } finally {
         keysArrValue = await getAllKeys();
-        // console.log('keysArrValue', keysArrValue);
         if (keysArrValue._W !== null) {
           let ret = await multiGet(keysArrValue);
           console.log('ret', ret);
