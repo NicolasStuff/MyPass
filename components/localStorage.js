@@ -13,7 +13,9 @@ export let getAllKeys = async () => {
 };
 
 export let multiGet = async keys => {
-  await AsyncStorage.multiGet(keys).then(response => {
-    return response;
-  });
+  try {
+    return await AsyncStorage.multiGet(keys);
+  } catch (e) {
+    console.log('error', e);
+  }
 };

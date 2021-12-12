@@ -40,17 +40,12 @@ const AddRecordScreen = () => {
         value,
         time,
       };
-      setItem(id.toString(), JSON.stringify(obj));
+      await setItem(id.toString(), JSON.stringify(obj));
 
       //GET ALL KEYS
-      let keysArrValue = await getAllKeys();
-      console.log('keys AddRecordScreen', keysArrValue);
-      // try {
-      //   keys = await AsyncStorage.getAllKeys();
-      //   console.log('pas le bon endroit', keys);
-      // } catch (e) {
-      // read key error
-      // }
+      // let keysArrValue = await getAllKeys();
+      // console.log('keys AddRecordScreen', keysArrValue);
+
       setTitle('');
       setValue('');
       setSnackText('New record added');

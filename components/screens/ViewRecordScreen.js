@@ -4,6 +4,7 @@ import {ScrollView, View, StyleSheet} from 'react-native';
 import {Headline, Searchbar, Snackbar} from 'react-native-paper';
 import RecordCard from './RecordCard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {getAllKeys, multiGet} from '../localStorage';
 
 const AddRecordScreen = () => {
   const [search, setSearch] = useState('');
@@ -18,30 +19,27 @@ const AddRecordScreen = () => {
   const handleSearch = text => {
     setSearch(text);
   };
+
   useEffect(() => {
-    let handleFilter = ret => {
+    const handleFilter = ret => {
       let filteredArray = ret.filter(record =>
         JSON.parse(record[1].includes(search.toLowerCase())),
       );
       setDisplay(filteredArray);
     };
 
-    let keys = [];
-    let handleGetKeyAndMultiGet = async () => {
-      try {
-        keys = await AsyncStorage.getAllKeys();
-        if (keys._W !== null) {
-          await AsyncStorage.multiGet(keys).then(response => {
-            handleFilter(response);
-            setPassword(response);
-            setDeleted(false);
-          });
-        }
-      } catch (e) {
-        console.log(e);
+    let handleGetKeyAndMultiGet2 = async () => {
+      let keysArrValue = await getAllKeys();
+      console.log('keysArrValue', keysArrValue);
+      if (keysArrValue._W !== null) {
+        let ret = await multiGet(keysArrValue);
+        console.log('ret', ret);
+        handleFilter(ret);
+        setPassword(ret);
       }
     };
-    handleGetKeyAndMultiGet();
+
+    handleGetKeyAndMultiGet2();
   }, [search, isDeleted]);
 
   return (
