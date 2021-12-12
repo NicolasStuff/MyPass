@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 
-import {View, ScrollView, KeyboardAvoidingView, StyleSheet} from 'react-native';
+import {View, ScrollView, StyleSheet} from 'react-native';
 import {
   Headline,
   TextInput,
@@ -9,8 +9,7 @@ import {
   IconButton,
   Snackbar,
 } from 'react-native-paper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {setItem, getAllKeys} from '../localStorage';
+import {setItem} from '../localStorage';
 
 const AddRecordScreen = () => {
   const [title, setTitle] = useState('');
@@ -18,9 +17,6 @@ const AddRecordScreen = () => {
   const [isValueHidden, setValueHidden] = useState(true);
   const [isSnackVisible, setSnackVisible] = useState(false);
   const [snackText, setSnackText] = useState('');
-
-  const [tempValue, setTempValue] = useState([]);
-  // console.log('tempValue', tempValue);
 
   const handleValueHidden = () => {
     setValueHidden(!isValueHidden);
@@ -41,10 +37,6 @@ const AddRecordScreen = () => {
         time,
       };
       await setItem(id.toString(), JSON.stringify(obj));
-
-      //GET ALL KEYS
-      // let keysArrValue = await getAllKeys();
-      // console.log('keys AddRecordScreen', keysArrValue);
 
       setTitle('');
       setValue('');

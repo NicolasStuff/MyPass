@@ -1,6 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState} from 'react';
-
+import React, {useState, useEffect} from 'react';
 import {View, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
 import {
   Surface,
@@ -10,57 +9,49 @@ import {
   IconButton,
 } from 'react-native-paper';
 import Clipboard from '@react-native-community/clipboard';
-import {set} from 'react-native-reanimated';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {getAllKeys, multiGet, removeItem} from '../localStorage';
 
 const RecordCard = ({
-  record,
-  setSnackVisible,
   password,
-  setPassword,
+  setSnackVisible,
+  passwords,
+  setPasswords,
   records,
   setSnackText,
-  setDeleted,
-  isDeleted,
 }) => {
   const [isValueHidden, setValueHidden] = useState(true);
   const [cartDataRefactor, setCartDataRefactor] = useState(
-    JSON.parse(record[1]),
+    JSON.parse(password[1]),
   );
-  // console.log('cartDataRefactor', cartDataRefactor.id);
+  console.log(password);
+  useEffect(() => {
+    let handleGetKeyAndMultiGet = async () => {
+      let keysArrValue = await getAllKeys();
+      console.log('keysArrValue', keysArrValue);
+      if (keysArrValue._W !== null) {
+        let ret = await multiGet(keysArrValue);
+        // console.log('ret', ret);
+        setPasswords(ret);
+      }
+    };
+    handleGetKeyAndMultiGet();
+  }, [setPasswords]);
 
   const deleteRecord = async del => {
-    // console.log('del', del);
+    await removeItem(del.id.toString());
 
-    // console.log('deleteRecord', del);
-    try {
-      await AsyncStorage.removeItem(del.id.toString());
-      let keys = [];
-      let handleGetKeyAndMultiGet = async () => {
-        // console.log('je redemande les clefs pour mettre à jour');
-        try {
-          keys = await AsyncStorage.getAllKeys();
-        } catch (e) {
-          console.log(e);
-        } finally {
-          if (keys._W !== null) {
-            await AsyncStorage.multiGet(keys).then(response => {
-              setPassword(response);
-              setDeleted(false);
-            });
-          }
-        }
-      };
-      // setRecords(
-      //   cartDataRefactor.filter(recordss => recordss[0].id !== del.id),
-      // );
-      setDeleted(!isDeleted);
+    let handleGetKeyAndMultiGet = async () => {
+      let keysArrValue = await getAllKeys();
+      console.log('keysArrValue', keysArrValue);
+      if (keysArrValue._W !== null) {
+        let ret = await multiGet(keysArrValue);
+        // console.log('ret', ret);
+        setPasswords(ret);
+      }
       setSnackText('Record Deleted');
       setSnackVisible(true);
-    } catch (e) {
-      console.log(e);
-      // remove error
-    }
+    };
+    handleGetKeyAndMultiGet();
   };
 
   const copyToClipboard = (text, type) => {
@@ -70,7 +61,7 @@ const RecordCard = ({
   };
 
   return (
-    <Surface style={styles.record}>
+    <Surface style={styles.password}>
       <View style={{maxWidth: Dimensions.get('screen').width / 1.3}}>
         <TouchableOpacity
           onPress={() => copyToClipboard(cartDataRefactor.title, 'Key')}>
@@ -120,7 +111,7 @@ const styles = StyleSheet.create({
   search: {
     marginBottom: 10,
   },
-  record: {
+  password: {
     marginVertical: 5,
     padding: 10,
     flexDirection: 'row',

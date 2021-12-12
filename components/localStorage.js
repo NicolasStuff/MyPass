@@ -19,3 +19,11 @@ export let multiGet = async keys => {
     console.log('error', e);
   }
 };
+
+export let removeItem = async key => {
+  try {
+    return await AsyncStorage.removeItem(key);
+  } catch (e) {
+    console.log('error', e);
+  }
+};
