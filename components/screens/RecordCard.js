@@ -16,7 +16,6 @@ const RecordCard = ({
   setSnackVisible,
   passwords,
   setPasswords,
-  records,
   setSnackText,
 }) => {
   const [isValueHidden, setValueHidden] = useState(true);
@@ -27,7 +26,7 @@ const RecordCard = ({
   useEffect(() => {
     let handleGetKeyAndMultiGet = async () => {
       let keysArrValue = await getAllKeys();
-      console.log('keysArrValue', keysArrValue);
+      // console.log('keysArrValue', keysArrValue);
       if (keysArrValue._W !== null) {
         let ret = await multiGet(keysArrValue);
         // console.log('ret', ret);
@@ -36,22 +35,34 @@ const RecordCard = ({
     };
     handleGetKeyAndMultiGet();
   }, [setPasswords]);
+  console.log('passwords', passwords);
 
   const deleteRecord = async del => {
-    await removeItem(del.id.toString());
-
-    let handleGetKeyAndMultiGet = async () => {
-      let keysArrValue = await getAllKeys();
-      console.log('keysArrValue', keysArrValue);
-      if (keysArrValue._W !== null) {
-        let ret = await multiGet(keysArrValue);
-        // console.log('ret', ret);
-        setPasswords(ret);
-      }
-      setSnackText('Record Deleted');
-      setSnackVisible(true);
-    };
-    handleGetKeyAndMultiGet();
+    setPasswords('');
+    let keysArrValue;
+    try {
+      return await removeItem(del.id.toString());
+    } catch (e) {
+      console.log('error', e);
+    } finally {
+      let handleGetKeyAndMultiGet = async () => {
+        try {
+          keysArrValue = await getAllKeys();
+        } catch (e) {
+          console.log('error', e);
+        } finally {
+          // console.log('keysArrValue', keysArrValue);
+          if (keysArrValue._W !== null) {
+            let ret = await multiGet(keysArrValue);
+            // console.log('ret', ret);
+            setPasswords(ret);
+          }
+          setSnackText('Record Deleted');
+          setSnackVisible(true);
+        }
+      };
+      handleGetKeyAndMultiGet();
+    }
   };
 
   const copyToClipboard = (text, type) => {

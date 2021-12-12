@@ -11,17 +11,34 @@ const AddRecordScreen = () => {
   const [passwords, setPasswords] = useState([]);
 
   useEffect(() => {
-    let handleGetKeyAndMultiGet2 = async () => {
-      let keysArrValue = await getAllKeys();
-      console.log('keysArrValue', keysArrValue);
-      if (keysArrValue._W !== null) {
-        let ret = await multiGet(keysArrValue);
-        // console.log('ret', ret);
-        setPasswords(ret);
+    // let handleGetKeyAndMultiGet2 = async () => {
+    //   let keysArrValue = await getAllKeys();
+    //   console.log('keysArrValue', keysArrValue);
+    //   if (keysArrValue._W !== null) {
+    //     let ret = await multiGet(keysArrValue);
+    //     // console.log('ret', ret);
+    //     setPasswords(ret);
+    //   }
+    // };
+    // handleGetKeyAndMultiGet2();
+    let handleGetKeyAndMultiGet = async () => {
+      let keysArrValue;
+      try {
+        keysArrValue = await getAllKeys();
+      } catch (e) {
+        console.log('error', e);
+      } finally {
+        keysArrValue = await getAllKeys();
+        // console.log('keysArrValue', keysArrValue);
+        if (keysArrValue._W !== null) {
+          let ret = await multiGet(keysArrValue);
+          console.log('ret', ret);
+          setPasswords(ret);
+        }
       }
     };
-    handleGetKeyAndMultiGet2();
-  }, [setPasswords, passwords]);
+    handleGetKeyAndMultiGet();
+  }, [setPasswords]);
 
   return (
     <>

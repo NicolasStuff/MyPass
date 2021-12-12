@@ -36,8 +36,13 @@ const AddRecordScreen = () => {
         value,
         time,
       };
-      await setItem(id.toString(), JSON.stringify(obj));
-
+      try {
+        await setItem(id.toString(), JSON.stringify(obj));
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setItem('');
+      }
       setTitle('');
       setValue('');
       setSnackText('New record added');
