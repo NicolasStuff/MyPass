@@ -39,7 +39,7 @@ const AddRecordScreen = () => {
       try {
         await setItem(id.toString(), JSON.stringify(obj));
       } catch (error) {
-        console.log(error);
+        console.log('error setItem', error);
       } finally {
         setItem('');
       }

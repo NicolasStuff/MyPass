@@ -3,12 +3,14 @@ import React, {useState, useEffect} from 'react';
 import {ScrollView, View, StyleSheet} from 'react-native';
 import {Headline, Snackbar} from 'react-native-paper';
 import RecordCard from './RecordCard';
-import {getAllKeys, multiGet} from '../localStorage';
+import {getAllKeys, multiGet, removeItem} from '../localStorage';
 
 const AddRecordScreen = () => {
   const [isSnackVisible, setSnackVisible] = useState(false);
   const [snackText, setSnackText] = useState('Done');
   const [passwords, setPasswords] = useState([]);
+  const [removedItem, setRemovedItem] = useState(null);
+  console.log('passwords', passwords);
 
   useEffect(() => {
     // let handleGetKeyAndMultiGet2 = async () => {
@@ -38,7 +40,39 @@ const AddRecordScreen = () => {
       }
     };
     handleGetKeyAndMultiGet();
-  }, [setPasswords]);
+  }, [setPasswords, removedItem]);
+
+  if (removedItem !== null) {
+    console.log('removedItem', removedItem);
+    const deleteRecord = async () => {
+      let keysArrValue;
+      try {
+        return await removeItem(removedItem.id.toString());
+      } catch (e) {
+        console.log('error', e);
+      } finally {
+        let handleGetKeyAndMultiGet = async () => {
+          try {
+            keysArrValue = await getAllKeys();
+          } catch (e) {
+            console.log('error', e);
+          } finally {
+            // console.log('keysArrValue', keysArrValue);
+            if (keysArrValue._W !== null) {
+              let ret = await multiGet(keysArrValue);
+              console.log('ret', ret);
+              setPasswords(ret);
+              setRemovedItem(null);
+            }
+            setSnackText('Record Deleted');
+            setSnackVisible(true);
+          }
+        };
+        handleGetKeyAndMultiGet();
+      }
+    };
+    deleteRecord();
+  }
 
   return (
     <>
@@ -51,10 +85,10 @@ const AddRecordScreen = () => {
             <RecordCard
               key={index}
               password={password}
-              passwords={passwords}
               setPasswords={setPasswords}
               setSnackVisible={setSnackVisible}
               setSnackText={setSnackText}
+              setRemovedItem={setRemovedItem}
             />
           ))}
         </ScrollView>

@@ -14,15 +14,15 @@ import {getAllKeys, multiGet, removeItem} from '../localStorage';
 const RecordCard = ({
   password,
   setSnackVisible,
-  passwords,
   setPasswords,
   setSnackText,
+  setRemovedItem,
 }) => {
   const [isValueHidden, setValueHidden] = useState(true);
-  const [cartDataRefactor, setCartDataRefactor] = useState(
-    JSON.parse(password[1]),
-  );
-  console.log(password);
+  // const [cartDataRefactor, setCartDataRefactor] = useState(
+  //   JSON.parse(password[1]),
+  // );
+  console.log('password solo recordCard', password);
   useEffect(() => {
     let handleGetKeyAndMultiGet = async () => {
       let keysArrValue = await getAllKeys();
@@ -35,33 +35,38 @@ const RecordCard = ({
     };
     handleGetKeyAndMultiGet();
   }, [setPasswords]);
-  console.log('passwords', passwords);
+  // console.log('passwords', passwords);
 
   const deleteRecord = async del => {
-    setPasswords('');
-    let keysArrValue;
+    // setPasswords('');
+    // let keysArrValue;
+    // try {
+    //   return await removeItem(del.id.toString());
+    // } catch (e) {
+    //   console.log('error', e);
+    // } finally {
+    //   let handleGetKeyAndMultiGet = async () => {
+    //     try {
+    //       keysArrValue = await getAllKeys();
+    //     } catch (e) {
+    //       console.log('error', e);
+    //     } finally {
+    //       // console.log('keysArrValue', keysArrValue);
+    //       if (keysArrValue._W !== null) {
+    //         let ret = await multiGet(keysArrValue);
+    //         // console.log('ret', ret);
+    //         setPasswords(ret);
+    //       }
+    //       setSnackText('Record Deleted');
+    //       setSnackVisible(true);
+    //     }
+    //   };
+    //   handleGetKeyAndMultiGet();
+    // }
     try {
-      return await removeItem(del.id.toString());
+      setRemovedItem(del);
     } catch (e) {
       console.log('error', e);
-    } finally {
-      let handleGetKeyAndMultiGet = async () => {
-        try {
-          keysArrValue = await getAllKeys();
-        } catch (e) {
-          console.log('error', e);
-        } finally {
-          // console.log('keysArrValue', keysArrValue);
-          if (keysArrValue._W !== null) {
-            let ret = await multiGet(keysArrValue);
-            // console.log('ret', ret);
-            setPasswords(ret);
-          }
-          setSnackText('Record Deleted');
-          setSnackVisible(true);
-        }
-      };
-      handleGetKeyAndMultiGet();
     }
   };
 
@@ -75,11 +80,13 @@ const RecordCard = ({
     <Surface style={styles.password}>
       <View style={{maxWidth: Dimensions.get('screen').width / 1.3}}>
         <TouchableOpacity
-          onPress={() => copyToClipboard(cartDataRefactor.title, 'Key')}>
-          <Title>{cartDataRefactor.title}</Title>
+          onPress={() => copyToClipboard(JSON.parse(password[1]).title, 'Key')}>
+          <Title>{JSON.parse(password[1]).title}</Title>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => copyToClipboard(cartDataRefactor.value, 'Value')}>
+          onPress={() =>
+            copyToClipboard(JSON.parse(password[1]).value, 'Value')
+          }>
           <TextInput
             mode="outlined"
             style={{
@@ -90,14 +97,16 @@ const RecordCard = ({
             editable={false}
             focusable={false}
             secureTextEntry={isValueHidden}
-            value={cartDataRefactor.value}
+            value={JSON.parse(password[1]).value}
           />
         </TouchableOpacity>
-        <Caption style={{marginTop: 10}}>{cartDataRefactor.time}</Caption>
+        <Caption style={{marginTop: 10}}>
+          {JSON.parse(password[1]).time}
+        </Caption>
       </View>
       <View>
         <IconButton
-          onPress={() => deleteRecord(cartDataRefactor)}
+          onPress={() => deleteRecord(JSON.parse(password[1]))}
           icon="delete"
         />
         <IconButton
