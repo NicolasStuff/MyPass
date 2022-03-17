@@ -12,10 +12,10 @@ const HomeTabs = () => {
   return (
     <Tab.Navigator>
       <Tab.Screen name="Add Record">
-        {() => <AddRecordScreen counter={counter} setCounter={setCounter}/>}
+        {() => <AddRecordScreen counter={counter} setCounter={setCounter} />}
       </Tab.Screen>
       <Tab.Screen name="View Record">
-        {() => <ViewRecordScreen counter={counter} setCounter={setCounter}/>}
+        {() => <ViewRecordScreen counter={counter} setCounter={setCounter} />}
       </Tab.Screen>
     </Tab.Navigator>
   );
