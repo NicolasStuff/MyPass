@@ -11,41 +11,12 @@ import {
 import Clipboard from '@react-native-community/clipboard';
 import {load} from '../localStorage';
 
-const RecordCard = ({
-  provider,
-  // password,
-  // setPasswords,
-  // setRemovedItem,
-  setSnackVisible,
-  setSnackText,
-}) => {
+const RecordCard = ({provider, setSnackVisible, setSnackText}) => {
   const [isValueHidden, setValueHidden] = useState(true);
-  const [credentials, setCredentials] = useState(null);
+  const [credentials, setCredentials] = useState();
 
-  // console.log('password solo recordCard', password);
-
-  // useEffect(() => {
-  //   let handleGetKeyAndMultiGet = async () => {
-  //     let keysArrValue = await getAllKeys();
-  //     if (keysArrValue._W !== null) {
-  //       let ret = await multiGet(keysArrValue);
-  //       setPasswords(ret);
-  //     }
-  //   };
-  //   handleGetKeyAndMultiGet();
-  // }, [setPasswords]);
-
-  // const deleteRecord = async del => {
-  //   try {
-  //     setRemovedItem(del);
-  //   } catch (e) {
-  //     console.log('error', e);
-  //   }
-  // };
-
-  const onload = async name => {
-    let ret = await load(name);
-    console.log('ret', ret);
+  const onload = async () => {
+    let ret = await load(provider);
     setCredentials(ret);
   };
 
@@ -61,9 +32,9 @@ const RecordCard = ({
         <TouchableOpacity onPress={() => copyToClipboard('Key')}>
           <Title>Provider : {provider}</Title>
         </TouchableOpacity>
-        {credentials === null && (
+        {!credentials && (
           <>
-            <TouchableOpacity onPress={() => copyToClipboard('Value')}>
+            <TouchableOpacity onPress={() => onload()}>
               <TextInput
                 mode="outlined"
                 style={{
@@ -79,7 +50,7 @@ const RecordCard = ({
           </>
         )}
 
-        {credentials !== null && (
+        {credentials && (
           <>
             <TouchableOpacity onPress={() => copyToClipboard('Value')}>
               <TextInput
@@ -111,7 +82,6 @@ const RecordCard = ({
             </TouchableOpacity>
           </>
         )}
-        {/* <Caption style={{marginTop: 10}}>coucou</Caption> */}
       </View>
       <View>
         {/* <IconButton

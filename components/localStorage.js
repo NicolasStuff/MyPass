@@ -1,33 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Keychain from 'react-native-keychain';
-
-export let setItem = async (key, value) => {
-  await AsyncStorage.setItem(key, value);
-};
-
-export let getAllKeys = async () => {
-  try {
-    return await AsyncStorage.getAllKeys();
-  } catch (e) {
-    console.log('error', e);
-  }
-};
-
-export let multiGet = async keys => {
-  try {
-    return await AsyncStorage.multiGet(keys);
-  } catch (e) {
-    console.log('error', e);
-  }
-};
-
-export let removeItem = async key => {
-  try {
-    return await AsyncStorage.removeItem(key);
-  } catch (e) {
-    console.log('error', e);
-  }
-};
 
 //KeychainStorage
 
@@ -82,7 +53,7 @@ export const getAll = async () => {
   }
 };
 
-export const load = async name => {
+export const load = async provider => {
   try {
     const options = {
       authenticationPrompt: {
@@ -91,11 +62,13 @@ export const load = async name => {
         description: 'Obligatoire',
         cancel: 'Cancel',
       },
-      service: name,
+      service: provider,
     };
     const credentials = await Keychain.getGenericPassword(options);
     if (credentials) {
-      console.log('credentials', credentials);
+      // console.log('credentials onLoad', typeof credentials);
+      // console.log('credentials', credentials);
+      return credentials;
     } else {
       console.log('No credentials stored.');
     }
