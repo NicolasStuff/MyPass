@@ -60,6 +60,14 @@ const KeychainFunctionalComponent = () => {
 
   const save = async () => {
     try {
+      console.log(
+        'savekEYCHAIN',
+        username,
+        password,
+        accessControl,
+        securityLevel,
+        storageSelection,
+      );
       let start = new Date();
 
       await Keychain.setGenericPassword(username, password, {
@@ -117,6 +125,7 @@ const KeychainFunctionalComponent = () => {
     try {
       const result = await Keychain.getAllGenericPasswordServices();
       setStatus(`All keys successfully fetched! Found: ${result.length} keys.`);
+      console.log('result', result);
     } catch (err) {
       setStatus('Could not get all keys. ' + err);
     }

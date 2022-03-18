@@ -40,6 +40,15 @@ export const save = async (
   storageSelection,
 ) => {
   try {
+    console.log(
+      'save',
+      username,
+      password,
+      provider,
+      accessControl,
+      securityLevel,
+      storageSelection,
+    );
     let start = new Date();
 
     await Keychain.setGenericPassword(username, password, {
@@ -61,48 +70,48 @@ export const save = async (
   }
 };
 
-// //TRADUCTION:
-// export const load = async () => {
-//   try {
-//     const options = {
-//       authenticationPrompt: {
-//         title: 'Authentication needed',
-//         subtitle: 'Subtitle',
-//         description: 'Some descriptive text',
-//         cancel: 'Cancel',
-//       },
-//     };
-//     const credentials = await Keychain.getGenericPassword(options);
-//     if (credentials) {
-//       console.log('credentials', credentials);
-//       setStatus('Credentials loaded!');
-//     } else {
-//       setStatus('No credentials stored.');
-//     }
-//   } catch (err) {
-//     setStatus({status: 'Could not load credentials. ' + err});
-//   }
-// };
+export const getAll = async () => {
+  try {
+    const result = await Keychain.getAllGenericPasswordServices();
+    // setStatus(`All keys successfully fetched! Found: ${result.length} keys.`);
+    // console.log('result', result);
+    return result;
+  } catch (err) {
+    // setStatus('Could not get all keys. ' + err);
+    console.log('error', err);
+  }
+};
 
-// export const reset = async () => {
-//   try {
-//     await Keychain.resetGenericPassword();
-//     setStatus('Credentials reset!');
-//     setUsername('');
-//     setPassword('');
-//   } catch (err) {
-//     setStatus({status: 'Could not reset credentials, ' + err});
-//   }
-// };
+export const load = async name => {
+  try {
+    const options = {
+      authenticationPrompt: {
+        title: 'Authentification Requise',
+        subtitle: 'Pour lire le mot de passe, veuillez vous authentifier',
+        description: 'Obligatoire',
+        cancel: 'Cancel',
+      },
+      service: name,
+    };
+    const credentials = await Keychain.getGenericPassword(options);
+    if (credentials) {
+      console.log('credentials', credentials);
+    } else {
+      console.log('No credentials stored.');
+    }
+  } catch (err) {
+    console.log('Could not load credentials. ' + err);
+  }
+};
 
-// export const getAll = async () => {
-//   try {
-//     const result = await Keychain.getAllGenericPasswordServices();
-//     setStatus(`All keys successfully fetched! Found: ${result.length} keys.`);
-//   } catch (err) {
-//     setStatus('Could not get all keys. ' + err);
-//   }
-// };
+export const reset = async () => {
+  try {
+    await Keychain.resetGenericPassword();
+    console.log('Credentials reset!');
+  } catch (err) {
+    console.log('Could not reset credentials, ' + err);
+  }
+};
 
 // export const ios_specifics = async () => {
 //   try {

@@ -9,34 +9,44 @@ import {
   IconButton,
 } from 'react-native-paper';
 import Clipboard from '@react-native-community/clipboard';
-import {getAllKeys, multiGet} from '../localStorage';
+import {load} from '../localStorage';
 
 const RecordCard = ({
-  password,
+  provider,
+  // password,
+  // setPasswords,
+  // setRemovedItem,
   setSnackVisible,
-  setPasswords,
   setSnackText,
-  setRemovedItem,
 }) => {
   const [isValueHidden, setValueHidden] = useState(true);
-  console.log('password solo recordCard', password);
-  useEffect(() => {
-    let handleGetKeyAndMultiGet = async () => {
-      let keysArrValue = await getAllKeys();
-      if (keysArrValue._W !== null) {
-        let ret = await multiGet(keysArrValue);
-        setPasswords(ret);
-      }
-    };
-    handleGetKeyAndMultiGet();
-  }, [setPasswords]);
+  const [credentials, setCredentials] = useState(null);
 
-  const deleteRecord = async del => {
-    try {
-      setRemovedItem(del);
-    } catch (e) {
-      console.log('error', e);
-    }
+  // console.log('password solo recordCard', password);
+
+  // useEffect(() => {
+  //   let handleGetKeyAndMultiGet = async () => {
+  //     let keysArrValue = await getAllKeys();
+  //     if (keysArrValue._W !== null) {
+  //       let ret = await multiGet(keysArrValue);
+  //       setPasswords(ret);
+  //     }
+  //   };
+  //   handleGetKeyAndMultiGet();
+  // }, [setPasswords]);
+
+  // const deleteRecord = async del => {
+  //   try {
+  //     setRemovedItem(del);
+  //   } catch (e) {
+  //     console.log('error', e);
+  //   }
+  // };
+
+  const onload = async name => {
+    let ret = await load(name);
+    console.log('ret', ret);
+    setCredentials(ret);
   };
 
   const copyToClipboard = (text, type) => {
@@ -48,36 +58,66 @@ const RecordCard = ({
   return (
     <Surface style={styles.password}>
       <View style={{maxWidth: Dimensions.get('screen').width / 1.3}}>
-        <TouchableOpacity
-          onPress={() => copyToClipboard(JSON.parse(password[1]).title, 'Key')}>
-          <Title>{JSON.parse(password[1]).title}</Title>
+        <TouchableOpacity onPress={() => copyToClipboard('Key')}>
+          <Title>Provider : {provider}</Title>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() =>
-            copyToClipboard(JSON.parse(password[1]).value, 'Value')
-          }>
-          <TextInput
-            mode="outlined"
-            style={{
-              backgroundColor: 'transparent',
-              width: Dimensions.get('window').width / 1.3,
-            }}
-            dense
-            editable={false}
-            focusable={false}
-            secureTextEntry={isValueHidden}
-            value={JSON.parse(password[1]).value}
-          />
-        </TouchableOpacity>
-        <Caption style={{marginTop: 10}}>
-          {JSON.parse(password[1]).time}
-        </Caption>
+        {credentials === null && (
+          <>
+            <TouchableOpacity onPress={() => copyToClipboard('Value')}>
+              <TextInput
+                mode="outlined"
+                style={{
+                  backgroundColor: 'transparent',
+                  width: Dimensions.get('window').width / 1.3,
+                }}
+                dense
+                editable={false}
+                focusable={false}
+                value={'SHOW USERNAME AND PASSWORD'}
+              />
+            </TouchableOpacity>
+          </>
+        )}
+
+        {credentials !== null && (
+          <>
+            <TouchableOpacity onPress={() => copyToClipboard('Value')}>
+              <TextInput
+                mode="outlined"
+                style={{
+                  backgroundColor: 'transparent',
+                  width: Dimensions.get('window').width / 1.3,
+                }}
+                dense
+                editable={false}
+                focusable={false}
+                secureTextEntry={isValueHidden}
+                value={'Username : ' + credentials.username}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => copyToClipboard('Value')}>
+              <TextInput
+                mode="outlined"
+                style={{
+                  backgroundColor: 'transparent',
+                  width: Dimensions.get('window').width / 1.3,
+                }}
+                dense
+                editable={false}
+                focusable={false}
+                secureTextEntry={isValueHidden}
+                value={'password : ' + credentials.password}
+              />
+            </TouchableOpacity>
+          </>
+        )}
+        {/* <Caption style={{marginTop: 10}}>coucou</Caption> */}
       </View>
       <View>
-        <IconButton
+        {/* <IconButton
           onPress={() => deleteRecord(JSON.parse(password[1]))}
           icon="delete"
-        />
+        /> */}
         <IconButton
           onPress={() => setValueHidden(!isValueHidden)}
           icon={isValueHidden ? 'eye-off' : 'eye'}

@@ -13,43 +13,7 @@ import {setItem} from '../localStorage';
 import {save} from '../localStorage';
 import * as Keychain from 'react-native-keychain';
 
-const ACCESS_CONTROL_OPTIONS = ['None', 'Passcode', 'Password'];
-const ACCESS_CONTROL_OPTIONS_ANDROID = ['None'];
-const ACCESS_CONTROL_MAP = [
-  null,
-  Keychain.ACCESS_CONTROL.DEVICE_PASSCODE,
-  Keychain.ACCESS_CONTROL.APPLICATION_PASSWORD,
-  Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET,
-];
-const ACCESS_CONTROL_MAP_ANDROID = [
-  null,
-  Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET,
-];
-const SECURITY_LEVEL_OPTIONS = ['Any', 'Software', 'Hardware'];
-const SECURITY_LEVEL_MAP = [
-  Keychain.SECURITY_LEVEL.ANY,
-  Keychain.SECURITY_LEVEL.SECURE_SOFTWARE,
-  Keychain.SECURITY_LEVEL.SECURE_HARDWARE,
-];
-
-const SECURITY_STORAGE_OPTIONS = ['Best', 'FB', 'AES', 'RSA'];
-const SECURITY_STORAGE_MAP = [
-  null,
-  Keychain.STORAGE_TYPE.FB,
-  Keychain.STORAGE_TYPE.AES,
-  Keychain.STORAGE_TYPE.RSA,
-];
-
 const AddRecordScreen = ({counter, setCounter}) => {
-  const VALUES =
-    Platform.OS === 'ios'
-      ? ACCESS_CONTROL_OPTIONS
-      : ACCESS_CONTROL_OPTIONS_ANDROID;
-  const AC_MAP =
-    Platform.OS === 'ios' ? ACCESS_CONTROL_MAP : ACCESS_CONTROL_MAP_ANDROID;
-  const SL_MAP = Platform.OS === 'ios' ? [] : SECURITY_LEVEL_MAP;
-  const ST_MAP = Platform.OS === 'ios' ? [] : SECURITY_STORAGE_MAP;
-
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [provider, setProvider] = useState('');
@@ -57,37 +21,28 @@ const AddRecordScreen = ({counter, setCounter}) => {
   const [isSnackVisible, setSnackVisible] = useState(false);
   const [snackText, setSnackText] = useState('');
   const [accessControl, setAccessControl] = useState(
-    ACCESS_CONTROL_MAP_ANDROID,
+    Keychain.ACCESS_CONTROL.BIOMETRY_ANY_OR_DEVICE_PASSCODE,
+    // null,
   );
   const [biometryType, setBiometryType] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedSecurityIndex, setSelectedSecurityIndex] = useState(0);
   const [securityLevel, setSecurityLevel] = useState(
-    Keychain.SECURITY_LEVEL.SECURE_HARDWARE,
+    // Keychain.SECURITY_LEVEL.SECURE_HARDWARE,
+    null,
   );
   const [selectedStorageIndex, setSelectedStorageIndex] = useState(0);
   const [storageSelection, setStorageSelection] = useState(
-    Keychain.STORAGE_TYPE.AES,
+    // Keychain.STORAGE_TYPE.AES,
+    null,
   );
 
   const handleValueHidden = () => {
     setValueHidden(!isValueHidden);
   };
-  const getRandomInt = (min, max) => {
-    return Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min))) + min;
-  };
 
   const handleAddRecord = async () => {
     if (username.length > 0 && password.length > 0 && provider.length > 0) {
-      const id = new Date().getTime() + getRandomInt(10000, 100000);
-      const time = new Date().toLocaleDateString();
-
-      let obj = {
-        id,
-        username,
-        password,
-        time,
-      };
       try {
         // await setItem(id.toString(), JSON.stringify(obj));
         await save(
@@ -101,6 +56,7 @@ const AddRecordScreen = ({counter, setCounter}) => {
       } catch (error) {
         console.log('error setItem', error);
       } finally {
+        setProvider('');
         setItem('');
         setUsername('');
         setPassword('');

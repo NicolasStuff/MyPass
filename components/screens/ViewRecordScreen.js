@@ -1,16 +1,41 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 
-import {ScrollView, View, StyleSheet} from 'react-native';
-import {Headline, Snackbar} from 'react-native-paper';
+import {ScrollView, View, StyleSheet, Text} from 'react-native';
+import {Button, Headline, Snackbar} from 'react-native-paper';
 import RecordCard from './RecordCard';
 import {getAllKeys, multiGet, removeItem} from '../localStorage';
+import {getAll, load, reset} from '../localStorage';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useFocusEffect} from '@react-navigation/native';
 
 const ViewRecordScreen = ({counter, setCounter}) => {
   const [isSnackVisible, setSnackVisible] = useState(false);
   const [snackText, setSnackText] = useState('Done');
   const [passwords, setPasswords] = useState([]);
   const [removedItem, setRemovedItem] = useState(null);
-  console.log('passwords', passwords);
+
+  const [credentials, setCredentials] = useState([]);
+  // console.log('credentials', credentials);
+  const [keysProvider, setKeysProvider] = useState([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      let handleGetKeys = async () => {
+        getAll().then(data => {
+          console.log('data', data);
+          setKeysProvider(data);
+        });
+      };
+      handleGetKeys();
+
+      return () => handleGetKeys();
+    }, [setKeysProvider]),
+  );
+
+  const onload = async name => {
+    let ret = await load(name);
+    console.log('ret', ret);
+  };
 
   useEffect(() => {
     let handleGetKeyAndMultiGet = async () => {
@@ -23,7 +48,7 @@ const ViewRecordScreen = ({counter, setCounter}) => {
         keysArrValue = await getAllKeys();
         if (keysArrValue._W !== null) {
           let ret = await multiGet(keysArrValue);
-          console.log('ret', ret);
+          // console.log('ret', ret);
           setPasswords(ret);
         }
       }
@@ -68,12 +93,20 @@ const ViewRecordScreen = ({counter, setCounter}) => {
       <View style={styles.wrapper}>
         <View>
           <Headline style={styles.title}>Added Records</Headline>
+          <TouchableOpacity
+            style={styles.title}
+            onPress={() => {
+              onload('Apple');
+            }}>
+            <Text>Load Credentials</Text>
+          </TouchableOpacity>
         </View>
         <ScrollView>
-          {passwords.map((password, index) => (
+          {keysProvider.map((keyProvider, index) => (
             <RecordCard
               key={index}
-              password={password}
+              provider={keyProvider}
+              password={passwords}
               setPasswords={setPasswords}
               setSnackVisible={setSnackVisible}
               setSnackText={setSnackText}
