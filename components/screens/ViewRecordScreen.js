@@ -33,7 +33,7 @@ const ViewRecordScreen = () => {
   };
 
   return (
-    <>
+    <ScrollView>
       <View style={styles.wrapper}>
         <View>
           <Headline style={styles.title}>Added Records</Headline>
@@ -45,16 +45,16 @@ const ViewRecordScreen = () => {
             <Text>Load Credentials</Text>
           </TouchableOpacity>
         </View>
-        <ScrollView>
-          {keysProvider.map((keyProvider, index) => (
-            <RecordCard
-              key={index}
-              provider={keyProvider}
-              setSnackVisible={setSnackVisible}
-              setSnackText={setSnackText}
-            />
-          ))}
-        </ScrollView>
+        {/* <ScrollView> */}
+        {keysProvider.map((keyProvider, index) => (
+          <RecordCard
+            key={index}
+            provider={keyProvider}
+            setSnackVisible={setSnackVisible}
+            setSnackText={setSnackText}
+          />
+        ))}
+        {/* </ScrollView> */}
       </View>
       <Snackbar
         visible={isSnackVisible}
@@ -62,7 +62,7 @@ const ViewRecordScreen = () => {
         duration={2000}>
         {snackText}
       </Snackbar>
-    </>
+    </ScrollView>
   );
 };
 
