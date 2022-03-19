@@ -7,15 +7,9 @@ import {
   Dimensions,
   Text,
 } from 'react-native';
-import {
-  Surface,
-  TextInput,
-  Title,
-  Caption,
-  IconButton,
-} from 'react-native-paper';
+import {Surface, TextInput, Title, IconButton} from 'react-native-paper';
 import Clipboard from '@react-native-community/clipboard';
-import {load} from '../localStorage';
+import {load, reset} from '../localStorage';
 
 const RecordCard = ({provider, setSnackVisible, setSnackText}) => {
   const [isValueHidden, setValueHidden] = useState(true);
@@ -30,6 +24,13 @@ const RecordCard = ({provider, setSnackVisible, setSnackText}) => {
     Clipboard.setString(text);
     setSnackText(`Copied ${type} to Clipboard`);
     setSnackVisible(true);
+  };
+
+  // eslint-disable-next-line no-shadow
+  const setDeleteItem = () => {
+    setSnackText(`Item ${provider} deleted`);
+    setSnackVisible(true);
+    reset(provider);
   };
 
   return (
@@ -96,10 +97,7 @@ const RecordCard = ({provider, setSnackVisible, setSnackText}) => {
         )}
       </View>
       <View>
-        {/* <IconButton
-          onPress={() => deleteRecord(JSON.parse(password[1]))}
-          icon="delete"
-        /> */}
+        <IconButton onPress={() => setDeleteItem()} icon="delete" />
         <IconButton
           onPress={() => setValueHidden(!isValueHidden)}
           icon={isValueHidden ? 'eye-off' : 'eye'}

@@ -77,10 +77,13 @@ export const load = async provider => {
   }
 };
 
-export const reset = async () => {
+export const reset = async provider => {
   try {
-    await Keychain.resetGenericPassword();
-    console.log('Credentials reset!');
+    const options = {
+      service: provider,
+    };
+    await Keychain.resetGenericPassword(options);
+    console.log('Credential deleted!');
   } catch (err) {
     console.log('Could not reset credentials, ' + err);
   }

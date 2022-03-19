@@ -10,7 +10,6 @@ import {useFocusEffect} from '@react-navigation/native';
 const ViewRecordScreen = () => {
   const [isSnackVisible, setSnackVisible] = useState(false);
   const [snackText, setSnackText] = useState('Done');
-
   const [keysProvider, setKeysProvider] = useState([]);
 
   useFocusEffect(
@@ -24,7 +23,8 @@ const ViewRecordScreen = () => {
       handleGetKeys();
 
       return () => handleGetKeys();
-    }, [setKeysProvider]),
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [setKeysProvider, snackText]),
   );
 
   return (
