@@ -9,7 +9,6 @@ import {
   IconButton,
   Snackbar,
 } from 'react-native-paper';
-import {setItem} from '../localStorage';
 import {save} from '../localStorage';
 import * as Keychain from 'react-native-keychain';
 
@@ -44,7 +43,6 @@ const AddRecordScreen = ({counter, setCounter}) => {
   const handleAddRecord = async () => {
     if (username.length > 0 && password.length > 0 && provider.length > 0) {
       try {
-        // await setItem(id.toString(), JSON.stringify(obj));
         await save(
           username,
           password,
@@ -54,10 +52,9 @@ const AddRecordScreen = ({counter, setCounter}) => {
           storageSelection,
         );
       } catch (error) {
-        console.log('error setItem', error);
+        console.log('error save item', error);
       } finally {
         setProvider('');
-        setItem('');
         setUsername('');
         setPassword('');
         setCounter(counter + 1);
@@ -86,7 +83,7 @@ const AddRecordScreen = ({counter, setCounter}) => {
             style={styles.input}
             label="Username"
             value={username}
-            onChangeText={text => setUsername(text)}
+            onChangeText={usernames => setUsername(usernames)}
           />
           <HelperText>Username, Email, etc.</HelperText>
           <View style={styles.valueWrapper}>
@@ -94,7 +91,7 @@ const AddRecordScreen = ({counter, setCounter}) => {
               style={styles.input}
               label="Value"
               value={password}
-              onChangeText={text => setPassword(text)}
+              onChangeText={passwords => setPassword(passwords)}
               secureTextEntry={isValueHidden}
             />
             <HelperText>Password, Some secret, etc.</HelperText>

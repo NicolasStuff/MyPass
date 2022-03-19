@@ -27,23 +27,11 @@ const ViewRecordScreen = () => {
     }, [setKeysProvider]),
   );
 
-  const onload = async name => {
-    let ret = await load(name);
-    console.log('ret', ret);
-  };
-
   return (
     <ScrollView>
       <View style={styles.wrapper}>
         <View>
           <Headline style={styles.title}>Added Records</Headline>
-          <TouchableOpacity
-            style={styles.title}
-            onPress={() => {
-              onload('Apple');
-            }}>
-            <Text>Load Credentials</Text>
-          </TouchableOpacity>
         </View>
         {/* <ScrollView> */}
         {keysProvider.map((keyProvider, index) => (

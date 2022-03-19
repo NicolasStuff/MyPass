@@ -1,6 +1,12 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
-import {View, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  Text,
+} from 'react-native';
 import {
   Surface,
   TextInput,
@@ -29,7 +35,7 @@ const RecordCard = ({provider, setSnackVisible, setSnackText}) => {
   return (
     <Surface style={styles.password}>
       <View style={{maxWidth: Dimensions.get('screen').width / 1.3}}>
-        <TouchableOpacity onPress={() => copyToClipboard('Key')}>
+        <TouchableOpacity onPress={() => copyToClipboard(provider, 'Provider')}>
           <Title>Provider : {provider}</Title>
         </TouchableOpacity>
         {!credentials && (
@@ -52,7 +58,10 @@ const RecordCard = ({provider, setSnackVisible, setSnackText}) => {
 
         {credentials && (
           <>
-            <TouchableOpacity onPress={() => copyToClipboard('Value')}>
+            <TouchableOpacity
+              onPress={() => copyToClipboard(credentials.username, 'Username')}
+              style={styles.button}>
+              <Text>Username :</Text>
               <TextInput
                 mode="outlined"
                 style={{
@@ -63,10 +72,13 @@ const RecordCard = ({provider, setSnackVisible, setSnackText}) => {
                 editable={false}
                 focusable={false}
                 secureTextEntry={isValueHidden}
-                value={'Username : ' + credentials.username}
+                value={credentials.username}
               />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => copyToClipboard('Value')}>
+            <TouchableOpacity
+              onPress={() => copyToClipboard(credentials.password, 'Password')}
+              style={styles.button}>
+              <Text>Password :</Text>
               <TextInput
                 mode="outlined"
                 style={{
@@ -77,7 +89,7 @@ const RecordCard = ({provider, setSnackVisible, setSnackText}) => {
                 editable={false}
                 focusable={false}
                 secureTextEntry={isValueHidden}
-                value={'password : ' + credentials.password}
+                value={credentials.password}
               />
             </TouchableOpacity>
           </>
@@ -115,6 +127,10 @@ const styles = StyleSheet.create({
     padding: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  button: {
+    marginTop: 5,
+    marginBottom: 5,
   },
 });
 
